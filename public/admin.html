@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrateur</title>
+  <meta name="theme-color" content="#090d16">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      overflow-y: auto !important;
+      position: static !important;
+      background: #090d16;
+      color: #f8fafc;
+      padding: 16px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .admin-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding-bottom: 60px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 24px;
+    }
+    .admin-card {
+      background: linear-gradient(145deg, #111827 0%, #0d1322 100%);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(245, 158, 11, 0.05);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #ffffff;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+    .drop-zone {
+      border: 2px dashed #f59e0b;
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(245, 158, 11, 0.03);
+      transition: all 0.2s ease;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #fbbf24;
+      background: rgba(245, 158, 11, 0.08);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+    }
+    .preview-box {
+      margin-top: 14px;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    .preview-img {
+      max-width: 90px;
+      max-height: 90px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #1e293b;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000000;
+      font-weight: 800;
+      font-size: 1rem;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+    .card-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .biscuit-item {
+      background: #182238;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+    .biscuit-item:hover {
+      transform: translateY(-2px);
+      border-color: #f59e0b;
+    }
+    .biscuit-item.hidden-card {
+      opacity: 0.65;
+      border-color: #ef4444;
+    }
+    .biscuit-item-img {
+      height: 180px;
+      width: 100%;
+      object-fit: cover;
+      background: #0f172a;
+    }
+    .biscuit-item-placeholder {
+      height: 180px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      font-size: 3rem;
+    }
+    .biscuit-item-content {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .badge-code {
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #38bdf8;
+    }
+    .badge-status {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .badge-status.visible {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid #10b981;
+    }
+    .badge-status.hidden {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+    }
+    .item-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-small {
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #cbd5e1;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-small:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .btn-reveal {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #34d399;
+    }
+    .btn-reveal:hover {
+      background: #10b981;
+      color: #000000;
+    }
+    .btn-mask {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: #f59e0b;
+      color: #fbbf24;
+    }
+    .btn-mask:hover {
+      background: #f59e0b;
+      color: #000000;
+    }
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #fca5a5;
+      flex: 0 0 auto;
+    }
+    .btn-delete:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    /* Modal de Connexion Admin */
+    .auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 8, 16, 0.95);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-box {
+      background: #111827;
+      border: 2px solid #f59e0b;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Modal d'authentification Admin -->
+  <div class="auth-overlay" id="authModal">
+    <div class="auth-box">
+      <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+      <h2 style="margin: 0 0 10px; color: #fbbf24; font-size: 1.3rem;">Réservé à l'Administrateur</h2>
+      <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 20px;">
+        authentifier vous
+      </p>
+      <form id="authForm">
+        <input type="password" class="form-control" id="adminPasswordInput" placeholder="Mot de passe (ex: admin2024)" required style="margin-bottom: 16px; text-align: center; letter-spacing: 2px;">
+        <button type="submit" class="btn-submit">🔓 Se Connecter</button>
+      </form>
+      <div style="margin-top: 14px;">
+        <a href="/" style="font-size: 0.8rem; color: #38bdf8; text-decoration: none;">← Retourner à la plateforme publique</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-container" id="adminMainContent" style="display:none;">
+    
+    <!-- En-tête -->
+    <header class="admin-header">
+      <div>
+        <h1 style="font-size:1.4rem; margin:0; color:#fbbf24;">✨ Administration des Images</h1>
+        <p style="font-size:0.85rem; color:#94a3b8; margin:4px 0 0;">
+          Seul l'administrateur peut publier de nouvelles images, les masquer (🔒) ou les dévoiler (👁️).
+        </p>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button onclick="logoutAdmin()" class="btn-small" style="background:#ef4444; color:#fff; border:none; padding:8px 12px;">Déconnexion</button>
+        <a href="/" class="btn-small" style="padding:8px 14px; background:#f59e0b; color:#000; font-weight:800; border:none;">
+          👁️ Vue Client
+        </a>
+      </div>
+    </header>
+
+    <!-- Formulaire d'Upload d'Image -->
+    <div class="admin-card">
+      <h2 style="font-size:1.15rem; margin-top:0; color:#f8fafc;">➕ Ajouter une Nouvelle Image</h2>
+      
+      <form id="uploadForm">
+        <!-- Zone de sélection d'image -->
+        <div class="form-group">
+          <label>1. Choisir l'image (Design - JPG, PNG, WebP) :</label>
+          <div class="drop-zone" id="dropZone">
+            <span style="font-size:2.5rem;">✨</span>
+            <div style="font-weight:700; color:#e2e8f0; margin-top:6px;">Cliquez pour parcourir ou glissez votre image resplendissante ici</div>
+            <div style="font-size:0.78rem; color:#94a3b8;">Format vertical recommandé pour l'affichage plein écran magique</div>
+            <input type="file" id="imageInput" accept="image/*" style="display:none;">
+          </div>
+          <div class="preview-box" id="previewBox">
+            <img id="previewImg" class="preview-img" alt="Aperçu">
+            <div>
+              <div id="previewName" style="font-weight:700; color:#ffffff;">image.png</div>
+              <div id="previewSize" style="font-size:0.75rem; color:#94a3b8;">150 KB</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label>2. Nom de l'Œuvre / Personnage :</label>
+            <input type="text" class="form-control" id="charName" placeholder="Ex: Éclat Solaire" required>
+          </div>
+          <div class="form-group">
+            <label>3. Titre / Rôle :</label>
+            <input type="text" class="form-control" id="charTitle" placeholder="Ex: Trésor Resplendissant">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label>4. Rareté / Éclat :</label>
+            <select class="form-control" id="charRarity">
+              <option value="Commune">Commune (Verte)</option>
+              <option value="Rare" selected>Rare (Bleue)</option>
+              <option value="Épique">Épique (Dorée)</option>
+              <option value="Légendaire">Légendaire (Holographique)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>5. Code Unique (Optionnel) :</label>
+            <input type="text" class="form-control" id="charCode" placeholder="Ex: BISCUIT-01 (Auto si vide)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>6. Citation / Description magique :</label>
+          <input type="text" class="form-control" id="charQuote" placeholder="Ex: « La beauté pure illumines les cœurs ! »">
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px;">
+          <input type="checkbox" id="charVisible" checked style="width: 20px; height: 20px; accent-color: #f59e0b; cursor: pointer;">
+          <div>
+            <label for="charVisible" style="margin: 0; cursor: pointer; color: #ffffff; font-weight: 700;">Dévoiler immédiatement au public</label>
+            <div style="font-size: 0.75rem; color: #94a3b8;">Si décoché, l'image restera masquée (🔒) jusqu'à ce que vous décidiez de la dévoiler.</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          ✨ Publier l'Image & Générer son QR Code
+        </button>
+      </form>
+    </div>
+
+    <!-- Modale d'affichage du QR Code généré -->
+    <div id="qrResultModal" style="display:none; margin-bottom:24px;" class="admin-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; color:#38bdf8;">✨ QR Code & Image Prêts</h3>
+        <button id="btnCloseResult" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:20px; align-items:center; margin-top:16px;">
+        <div id="modalQrSvg" style="background:#ffffff; padding:12px; border-radius:12px;"></div>
+        <div style="flex:1; min-width:220px;">
+          <div id="modalQrTitle" style="font-size:1.1rem; font-weight:800; color:#ffffff;">Œuvre #01</div>
+          <div id="modalQrCode" style="color:#f59e0b; font-family:monospace; margin-top:4px;">BISCUIT-01</div>
+          <div style="font-size:0.8rem; color:#94a3b8; margin:8px 0;">
+            URL publique : <span id="modalQrUrl" style="color:#38bdf8; word-break:break-all;"></span>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a id="btnTestDirect" href="#" target="_blank" class="btn-small" style="background:#f59e0b; color:#000; font-weight:700; border:none; padding:8px 12px;">
+              👁️ Tester l'affichage
+            </a>
+            <button id="btnDownloadModalQR" type="button" class="btn-small" style="background:#10b981; color:#000; font-weight:700; border:none; padding:8px 12px; cursor:pointer;">
+              📥 Télécharger QR PNG
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des images enregistrées -->
+    <div class="admin-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="font-size:1.15rem; margin:0; color:#f8fafc;">
+          📦 Toutes les Images (<span id="totalCardsCount">0</span>)
+        </h2>
+        <span style="font-size:0.8rem; color:#94a3b8;">Masquez ou dévoilez à tout moment</span>
+      </div>
+
+      <div class="card-list" id="cardsGrid">
+        <!-- Rempli par JavaScript -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="qrcode.js"></script>
+  <script>
+    // Gestion de l'authentification admin simple et sécurisée
+    const ADMIN_PIN = "admin2024"; // Mot de passe par défaut modifiable
+    const authModal = document.getElementById("authModal");
+    const adminMainContent = document.getElementById("adminMainContent");
+
+    function checkAdminAuth() {
+      const isAuth = sessionStorage.getItem("admin_authenticated");
+      if (isAuth === "true") {
+        authModal.style.display = "none";
+        adminMainContent.style.display = "block";
+        fetchCards();
+      } else {
+        authModal.style.display = "flex";
+        adminMainContent.style.display = "none";
+      }
+    }
+
+    document.getElementById("authForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pwd = document.getElementById("adminPasswordInput").value;
+      if (pwd === ADMIN_PIN) {
+        sessionStorage.setItem("admin_authenticated", "true");
+        checkAdminAuth();
+      } else {
+        alert("Mot de passe administrateur incorrect ! (Indice : admin2024)");
+      }
+    });
+
+    window.logoutAdmin = function() {
+      sessionStorage.removeItem("admin_authenticated");
+      checkAdminAuth();
+    };
+
+    checkAdminAuth();
+
+    let currentImageBase64 = null;
+    let allCards = [];
+
+    const dropZone = document.getElementById("dropZone");
+    const imageInput = document.getElementById("imageInput");
+    const previewBox = document.getElementById("previewBox");
+    const previewImg = document.getElementById("previewImg");
+    const previewName = document.getElementById("previewName");
+    const previewSize = document.getElementById("previewSize");
+
+    dropZone.addEventListener("click", () => imageInput.click());
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("dragover");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("dragover");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    imageInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Veuillez sélectionner un fichier image valide (JPG, PNG, WebP)");
+        return;
+      }
+      previewName.innerText = file.name;
+      previewSize.innerText = `${(file.size / 1024).toFixed(1)} KB`;
+
+      // Compression intelligente via Canvas pour éviter tout ERR_CONNECTION_RESET sur les images lourdes
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 1000;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          currentImageBase64 = canvas.toDataURL("image/jpeg", 0.85);
+          previewImg.src = currentImageBase64;
+          previewBox.style.display = "flex";
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function fetchCards() {
+      try {
+        const res = await fetch("/api/cards");
+        allCards = await res.json();
+      } catch (e) {
+        allCards = JSON.parse(localStorage.getItem("biscuit_custom_cards") || "[]");
+      }
+      renderCardsList();
+    }
+
+    function renderCardsList() {
+      document.getElementById("totalCardsCount").innerText = allCards.length;
+      const grid = document.getElementById("cardsGrid");
+
+      if (allCards.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:#64748b;">Aucune image enregistrée. Publiez votre première image resplendissante ci-dessus !</div>`;
+        return;
+      }
+
+      const origin = window.location.origin || "http://localhost:3000";
+
+      grid.innerHTML = allCards.map(c => {
+        const scanUrl = `${origin}/?code=${c.code}`;
+        const isVisible = c.visible !== false; // par défaut true
+        const imgHtml = c.image
+          ? `<img src="${c.image}" class="biscuit-item-img" alt="${c.name}">`
+          : `<div class="biscuit-item-placeholder">✨</div>`;
+
+        return `
+          <div class="biscuit-item ${isVisible ? '' : 'hidden-card'}">
+            ${imgHtml}
+            <div class="biscuit-item-content">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="badge-code">${c.code}</span>
+                  <span class="badge-status ${isVisible ? 'visible' : 'hidden'}">${isVisible ? '👁️ Dévoilée' : '🔒 Masquée'}</span>
+                </div>
+                <h4 style="margin:4px 0 2px; color:#ffffff; font-size:1rem;">${c.name}</h4>
+                <div style="font-size:0.75rem; color:#94a3b8;">${c.title || ""}</div>
+              </div>
+
+              <div class="item-actions">
+                <button onclick="toggleVisibility('${c.id}', ${isVisible})" class="btn-small ${isVisible ? 'btn-mask' : 'btn-reveal'}">
+                  ${isVisible ? '🔒 Masquer' : '👁️ Dévoiler'}
+                </button>
+                <button onclick="showQRCode('${c.id}')" class="btn-small" style="color:#fbbf24;">
+                  ⚡ QR
+                </button>
+                <button onclick="deleteCard('${c.id}')" class="btn-small btn-delete" title="Supprimer">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Basculer Masqué / Dévoilé
+    window.toggleVisibility = async function(id, currentVisible) {
+      const newVisible = !currentVisible;
+      try {
+        const res = await fetch(`/api/cards/${id}/visibility`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visible: newVisible })
+        });
+        const data = await res.json();
+        if (data.card) {
+          const idx = allCards.findIndex(c => c.id === id);
+          if (idx >= 0) allCards[idx] = data.card;
+        }
+      } catch (e) {
+        // Fallback local
+        const target = allCards.find(c => c.id === id);
+        if (target) {
+          target.visible = newVisible;
+          localStorage.setItem("biscuit_custom_cards", JSON.stringify(allCards));
+        }
+      }
+      renderCardsList();
+    };
+
+    let activeQrCard = null;
+
+    window.showQRCode = function(id) {
+      const c = allCards.find(item => item.id === id);
+      if (!c) return;
+      activeQrCard = c;
+
+      const origin = window.location.origin || "http://localhost:3000";
+      const scanUrl = `${origin}/?code=${c.code}`;
+
+      document.getElementById("modalQrTitle").innerText = `${c.name} (${c.rarity})`;
+      document.getElementById("modalQrCode").innerText = c.code;
+      document.getElementById("modalQrUrl").innerText = scanUrl;
+      document.getElementById("btnTestDirect").href = scanUrl;
+
+      const svg = window.QRCodeGenerator.generateSVG(scanUrl, 180);
+      document.getElementById("modalQrSvg").innerHTML = svg;
+
+      document.getElementById("qrResultModal").style.display = "block";
+      window.scrollTo({ top: document.getElementById("qrResultModal").offsetTop - 20, behavior: 'smooth' });
+    };
+
+    document.getElementById("btnCloseResult").addEventListener("click", () => {
+      document.getElementById("qrResultModal").style.display = "none";
+    });
+
+    document.getElementById("btnDownloadModalQR").addEventListener("click", () => {
+      if (activeQrCard) {
+        autoDownloadQRCode(activeQrCard);
+      } else {
+        alert("Aucun QR code sélectionné.");
+      }
+    });
+
+    window.deleteCard = async function(id) {
+      if (!confirm("Voulez-vous vraiment supprimer cette image resplendissante ?")) return;
+      try {
+        await fetch(`/api/cards/${id}`, { method: 'DELETE' });
+      } catch (e) {}
+      allCards = allCards.filter(c => c.id !== id);
+      localStorage.setItem("biscuit_custom_cards", JSON.stringify(allCards));
+      renderCardsList();
+    };
+
+    function autoDownloadQRCode(card) {
+      const origin = window.location.origin || "http://localhost:3000";
+      const scanUrl = `${origin}/?code=${card.code}`;
+      const svg = window.QRCodeGenerator.generateSVG(scanUrl, 400);
+
+      const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+      const URL = window.URL || window.webkitURL || window;
+      const blobURL = URL.createObjectURL(blob);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 400;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, 400, 400);
+        ctx.drawImage(image, 0, 0, 400, 400);
+
+        canvas.toBlob(pngBlob => {
+          const pngUrl = URL.createObjectURL(pngBlob);
+          const a = document.createElement("a");
+          a.href = pngUrl;
+          a.download = `QR-${card.code}-${card.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(pngUrl);
+        }, "image/png");
+
+        URL.revokeObjectURL(blobURL);
+      };
+      image.src = blobURL;
+    }
+
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("charName").value.trim();
+      const title = document.getElementById("charTitle").value.trim();
+      const rarity = document.getElementById("charRarity").value;
+      let code = document.getElementById("charCode").value.trim();
+      const quote = document.getElementById("charQuote").value.trim();
+      const isVisible = document.getElementById("charVisible").checked;
+
+      if (!code) {
+        code = `BISCUIT-${String(allCards.length + 1).padStart(2, '0')}`;
+      }
+
+      const payload = {
+        name: name,
+        title: title,
+        rarity: rarity,
+        code: code,
+        quote: quote,
+        visible: isVisible,
+        imageBase64: currentImageBase64
+      };
+
+      const btnSubmit = document.getElementById("btnSubmit");
+      btnSubmit.innerText = "✨ Publication en cours...";
+      btnSubmit.disabled = true;
+
+      try {
+        const res = await fetch("/api/cards", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.card) {
+          await fetchCards();
+          showQRCode(data.card.id);
+          try {
+            autoDownloadQRCode(data.card);
+          } catch (dlErr) {
+            console.error("Erreur téléchargement auto QR:", dlErr);
+          }
+          alert("✨ Œuvre publiée avec succès ! Le QR code a été généré.");
+        } else {
+          alert("Erreur lors de la publication : " + (data.error || "Inconnue"));
+        }
+      } catch (err) {
+        console.error("Erreur réseau publication:", err);
+        alert("Erreur de connexion au serveur : " + err.message);
+      } finally {
+        btnSubmit.innerText = "✨ Publier l'Image & Générer son QR Code";
+        btnSubmit.disabled = false;
+        document.getElementById("uploadForm").reset();
+        document.getElementById("charVisible").checked = true;
+        previewBox.style.display = "none";
+        currentImageBase64 = null;
+      }
+    });
+  </script>
+</body>
+</html>

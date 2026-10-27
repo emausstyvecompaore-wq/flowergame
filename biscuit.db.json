@@ -1,0 +1,20 @@
+{
+  "cards": [
+    {
+      "id": "biscuit-1793101876475",
+      "code": "BISCUIT-01",
+      "number": "01",
+      "name": "ertyui",
+      "title": "Trésor Resplendissant",
+      "rarity": "Rare",
+      "rarityClass": "rare",
+      "image": "/uploads/biscuit-1793101876475.jpg",
+      "quote": "Une œuvre resplendissante entre dans la légende !",
+      "power": "Éclat Divin",
+      "kingdom": "Royaumes d'Amani",
+      "votes": 0,
+      "visible": 1,
+      "updated_at": "2026-10-27T11:51:16.482Z"
+    }
+  ]
+}

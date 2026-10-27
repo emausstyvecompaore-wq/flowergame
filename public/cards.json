@@ -1,0 +1,31 @@
+[
+  {
+    "id": "biscuit-02",
+    "code": "BISCUIT-02",
+    "number": "02",
+    "name": "Amina Reine de la Pluie",
+    "title": "Héroïne & Stratège",
+    "rarity": "Légendaire",
+    "rarityClass": "legendary",
+    "image": "",
+    "quote": "L'eau semble douce, mais elle fend les rochers !",
+    "power": "Danse des Ruisseaux",
+    "kingdom": "Brumes du Nil Vert",
+    "votes": 210,
+    "visible": true
+  },
+  {
+    "id": "biscuit-03",
+    "code": "BISCUIT-03",
+    "number": "03",
+    "name": "Bayo l'Artisan",
+    "title": "Inventeur Solaire",
+    "rarity": "Rare",
+    "rarityClass": "rare",
+    "image": "",
+    "quote": "Laissez-moi 10 secondes et je vous fabrique un aéronef !",
+    "power": "Étincelle d'Ingéniosité",
+    "kingdom": "Forges d'Oyo",
+    "votes": 98
+  }
+]

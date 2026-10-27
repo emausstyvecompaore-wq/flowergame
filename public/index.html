@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Biscuits Legends — Collection & Série Animée</title>
+  <meta name="description" content="Plateforme de collection de cartes de personnages animés par scan de code QR au dos des biscuits.">
+  <meta name="theme-color" content="#090d16">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Conteneur Principal Plein Écran (Anti-Scroll Strict 100dvh) -->
+  <div class="app-container">
+    
+    <!-- Barre Supérieure -->
+    <header class="header-bar">
+      <div class="brand-badge">
+        <span class="brand-icon">🍪</span>
+        <span>BISCUITS LEGENDS</span>
+      </div>
+      <button class="collection-pill" id="collectionPill" title="Ouvrir mon album">
+        <span>📚 Album : 1/12</span>
+      </button>
+    </header>
+
+    <!-- ZONE CENTRALE : UNE SEULE IMAGE À LA FOIS (CARTE DU PERSONNAGE DU SCAN) -->
+    <main class="single-view-container" id="singleCardContainer">
+      <!-- Injecté dynamiquement par app.js -->
+    </main>
+
+    <!-- Barre d'Actions Inférieure -->
+    <footer class="action-bar">
+      <!-- Bouton Principal de Vote pour la Série Animée -->
+      <button class="btn-vote" id="btnVote">
+        <span>❤️ Voter pour la série animée (+1 voix)</span>
+      </button>
+
+      <!-- Actions Secondaires : Album & Nouveau Scan -->
+      <div class="secondary-actions">
+        <button class="btn-secondary" id="btnOpenAlbum">
+          <span>📚 Mon Album</span>
+        </button>
+        <button class="btn-secondary" id="btnOpenScan">
+          <span>📷 Scanner</span>
+        </button>
+        <button class="btn-secondary" id="btnOpenQR">
+          <span>⚡ QR Codes</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- =======================================================
+         MODALE 1 : MON ALBUM VIRTUEL (PAGINÉ SANS SCROLL)
+         ======================================================= -->
+    <div class="modal-overlay" id="albumModal">
+      <div class="modal-header">
+        <h3 class="modal-title">📚 Mon Album de Collection</h3>
+        <button class="btn-close" id="btnCloseAlbum">✕</button>
+      </div>
+
+      <div class="album-body">
+        <div class="album-grid" id="albumGrid">
+          <!-- 6 slots de cartes par page pour éviter tout défilement -->
+        </div>
+
+        <div class="album-pagination">
+          <button class="btn-secondary" id="btnPrevPage">◀ Précédent</button>
+          <span id="albumPageIndicator" style="font-size:0.8rem; font-weight:700; color:#94a3b8;">Page 1 / 2</span>
+          <button class="btn-secondary" id="btnNextPage">Suivant ▶</button>
+        </div>
+      </div>
+
+      <div style="font-size:0.75rem; color:#64748b; text-align:center;">
+        Touchez une carte débloquée pour l'admirer seule en plein écran.
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODALE 2 : SCANNER DE BISCUIT & SIMULATEUR
+         ======================================================= -->
+    <div class="modal-overlay" id="scanModal">
+      <div class="modal-header">
+        <h3 class="modal-title">📷 Scanner un Nouveau Biscuit</h3>
+        <button class="btn-close" id="btnCloseScan">✕</button>
+      </div>
+
+      <div class="scanner-viewport">
+        <div class="scanner-box">
+          <div class="laser-line"></div>
+          <span style="font-size:3rem; opacity:0.6;">🍪</span>
+        </div>
+        <div class="scanner-hint">
+          Pointez l'appareil photo vers le QR code unique au dos de l'étiquette de votre biscuit.
+        </div>
+      </div>
+
+      <div class="quick-simulator">
+        <div style="font-size:0.78rem; font-weight:700; color:#cbd5e1;">Test rapide de simulation :</div>
+        <select class="quick-select" id="quickSelect">
+          <!-- Rempli par app.js -->
+        </select>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODALE 3 : PLANCHE DE QR CODES (POUR FLASHER AVEC SMARTPHONE)
+         ======================================================= -->
+    <div class="modal-overlay" id="qrModal">
+      <div class="modal-header">
+        <h3 class="modal-title">⚡ Flasher avec votre Smartphone</h3>
+        <button class="btn-close" id="btnCloseQR">✕</button>
+      </div>
+
+      <div class="qr-sheet-body">
+        <select class="quick-select" id="qrSelect" style="max-width:300px;">
+          <!-- Rempli par app.js -->
+        </select>
+
+        <div class="qr-card-preview">
+          <div id="qrCodeContainer"></div>
+          <div class="qr-label" id="qrLabelText">Biscuit #01</div>
+        </div>
+
+        <div style="font-size:0.72rem; color:#64748b; text-align:center; max-width:280px; word-break:break-all;">
+          Cible : <span id="qrTargetUrl" style="color:#38bdf8;"></span>
+        </div>
+      </div>
+
+      <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
+        Ouvrez l'appareil photo de votre téléphone et visez le QR code ci-dessus pour ouvrir l'image instantanément !
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="characters.js"></script>
+  <script src="qrcode.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "flowerget",
+  "version": "1.0.0",
+  "description": "Plateforme d'images resplendissantes avec backend SQL pur JavaScript et espace admin sécurisé",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "images",
+    "resplendissant",
+    "admin",
+    "sql",
+    "node"
+  ],
+  "author": "Admin",
+  "license": "ISC",
+  "dependencies": {}
+}
